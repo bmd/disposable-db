@@ -1,0 +1,14 @@
+disposable-db:
+  container_name: disposable-db
+  image: mysql:5.6
+  ports:
+    - "3310:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: "1234"
+    MYSQL_DATABASE: "dd"
+  volumes:
+    # persist data on disk
+    - "./.data:/var/lib/mysql"
+
+    # load data on startup
+    - "./startup:/docker-entrypoint-initdb.d"
