@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Disposable-db by bmd</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Disposable-db</h1>
+        <h2>A standalone docker container for getting your tabular data into MySQL</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/bmd/disposable-db/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/bmd/disposable-db/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/bmd/disposable-db" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="disposabledb" class="anchor" href="#disposabledb" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DisposableDb</h1>
+
+<p>A Docker Container for Running MySQL Locally. For when Excel just won't cut it™</p>
+
+<h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h3>
+
+<p>Note: This docuemtation is targeted specifically at mac OS users (10.10 and above), so ymmv on other unix operating systems, but the logic should be about the same - <code>docker-compose</code> takes care of all of the heavy lifting here.</p>
+
+<p>The only thing you'll need to install on your local machine is the Docker for Mac app. See <a href="https://www.docker.com/products/docker#/mac">the Docker for Mac website</a> for instructions. </p>
+
+<h3>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Started</h3>
+
+<p>DisposableDb is designed to be as flexible as possible, so you'll need to do a bit of work to get it up and running for your specific data.</p>
+
+<p>1) Add the delimited file (or files) <code>whatever.csv</code> to the <code>startup</code> directory. Files in <code>startup</code> will be automatically mounted to the Docker container, and the image will scan for SQL files in that directory that it can execute.</p>
+
+<p>2) Write the SQL to load your data and add it into the startup directory. The only requirement is that the file extension is ".sql". In most cases, though, you're going to be doing two things - creating a table or tables to hold your data and then running a <code>LOAD DATA LOCAL INFLE ...</code> command to insert the data into your database. Note that the infile absolute path starts with <code>/docker-entrypoint-initdb.d</code>, which maps to the <code>startup</code> directory locally.</p>
+
+<div class="highlight highlight-source-sql"><pre><span class="pl-k">CREATE</span> <span class="pl-k">TABLE</span> <span class="pl-en">emails</span> (
+    id <span class="pl-k">INT</span> <span class="pl-k">NOT NULL</span> <span class="pl-k">PRIMARY KEY</span>,
+    email <span class="pl-k">VARCHAR</span>(<span class="pl-c1">128</span>)
+);
+
+LOAD DATA 
+  LOCAL INFILE <span class="pl-s"><span class="pl-pds">'</span>/docker-entrypoint-initdb.d/emails.csv<span class="pl-pds">'</span></span> 
+  INTO TABLE emails
+  FIELDS TERMINATED BY <span class="pl-s"><span class="pl-pds">'</span>,<span class="pl-pds">'</span></span>
+  LINES TERMINATED BY <span class="pl-s"><span class="pl-pds">'</span><span class="pl-cce">\n</span><span class="pl-pds">'</span></span>
+;</pre></div>
+
+<p>3) Run <code>make install</code> to build and run your container. You can then run <code>make mysql</code> from another session to connect to the database, or stop the running container with <code>ctrl-c</code> and run <code>make start &amp;&amp; make mysql</code> to restart the container in the background.</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
